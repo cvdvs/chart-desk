@@ -1,0 +1,173 @@
+# Chart Desk — local chart engine
+
+Local, on-device chart computation. No accounts, no network calls, no analytics —
+everything computes from the bundled engines (astronomy-engine ephemeris; Lahiri
+ayanamsa; whole-sign houses; mean node for Vedic, true node for Human Design).
+
+Base URL (on the machine): http://127.0.0.1:4700
+
+If you are an agent gathering charts: fetch ONE of the .md endpoints below and you
+have everything — no screenshots, no external sites. `atlas.md` is the full pack
+(Vedic + Human Design + Matrix). All data also exists as JSON at the same paths
+minus `.md`.
+
+## Profiles
+
+GET    /api/profiles                       list (name, slug, category, tags, avatar, birth, order)
+POST   /api/profiles                       create — body: { name, category, tags?: [..],
+                                           birth: { date:'YYYY-MM-DD', time:'HH:MM'|null,
+                                           lat, lon, tz:'Area/City', place },
+                                           avatar?: { color, glyph, shape }, notes?, order? }
+GET    /api/profiles/:slug                 the stored profile
+PATCH  /api/profiles/:slug                 update (same body, partial ok)
+DELETE /api/profiles/:slug                 remove (recoverable — moved to data/trash)
+GET    /api/categories                     [{key,label,order}] — PUT replaces, POST {label} adds one
+GET    /api/dashboard                      desk stats: totals per category, recently added,
+                                           lagna/moon/sun/HD-type distributions, running
+                                           mahadashas, upcoming MD/AD changes (12 months)
+GET    /api/sky                            the sky RIGHT NOW, both zodiacs. vedic: the nine
+                                           grahas (Lahiri, mean nodes) with sign, degree,
+                                           nakshatra + pada and when each ends; tropical:
+                                           Sun…Pluto + North Node. Every body carries its
+                                           stay {since, from, until, to} (sign entry/exit to
+                                           the minute), retro, speed, and stations
+                                           (retroSince/directOn, or nextRetro). "What's
+                                           transiting now / when does X change sign" → here.
+
+Profiles live as plain JSON in data/profiles/<slug>.json — agents with filesystem
+access may read/write them directly; the server reads fresh from disk each request.
+
+## Per-profile chart data (JSON)
+
+GET /api/profiles/:slug/chart              everything, one JSON (meta, vedic,
+                                           nakshatras, hd, matrix, panchanga, jaimini)
+GET /api/profiles/:slug/vedic              full Vedic chart (D1–D60 signs, dashas incl.
+                                           all antardashas, karakas, arudhas,
+                                           ashtakavarga, aspects, yogi, karakamsa, upapada)
+GET /api/profiles/:slug/varga?n=9          one varga unpacked as its own chart, with aspects
+GET /api/profiles/:slug/nakshatras         per-body nakshatra detail (pada, lords,
+                                           deity, purushartha, gana)
+GET /api/profiles/:slug/panchanga          vara, tithi, yoga, karana, hora
+GET /api/profiles/:slug/human-design       type, strategy, authority, profile, definition,
+                                           cross, channels, centers, both activation columns
+GET /api/profiles/:slug/matrix             Matrix of Destiny (all points, chains, chakra
+                                           table, age ring). Every ring period carries
+                                           start/end dates (YYYY-MM-DD); each sector has a
+                                           `corner` for its decade point. Each period holds
+                                           until the next one opens.
+GET /api/profiles/:slug/tropical           tropical positions (no ayanamsa; whole-sign
+                                           houses from the tropical ascendant)
+
+## Markdown packs (LLM-first)
+
+GET /api/profiles/:slug/atlas.md           EVERYTHING — the one file to fetch (Vedic + HD + Matrix)
+GET /api/profiles/:slug/vedic.md
+GET /api/profiles/:slug/human-design.md
+GET /api/profiles/:slug/matrix.md
+GET /api/profiles/:slug/dashas.md          Vimshottari dasha timeline (MD + AD, with ages)
+
+## Chart drawings (SVG)
+
+GET /api/profiles/:slug/chart.svg?style=north|south&varga=1&outers=0&standalone=1
+    Traditional North-Indian diamond / South-Indian square, any implemented varga.
+    22 are implemented and all of them draw:
+      D1 D2 D3 D4 D5 D6 D7 D8 D9 D10 D11 D12 D16 D20 D24 D27 D30 D45 D60 D81 D108 D144
+    D40 is the one astro-seek division NOT implemented — it was left out rather than
+    shipped on a guessed rule; ?varga=40 returns 400 "varga D40 not computed".
+    The authoritative set is the row labels of the "Varga signs" table in atlas.md,
+    which the engine generates by probing what it can actually compute.
+GET /api/profiles/:slug/wheel.svg          tropical western wheel (needs birth time)
+GET /api/profiles/:slug/hd.svg             Human Design bodygraph
+GET /api/profiles/:slug/matrix.svg         Matrix of Destiny octagram
+    All SVGs: &standalone=1 for a self-contained light file; the UI offers PNG
+    downloads (white or transparent) rendered client-side.
+
+## Bulk import — add many people at once
+
+POST /api/profiles/import      Content-Type: application/json
+    Body: { people: [ … ], category?, tags?, onExisting?, dryRun? }
+    Each person: { name, date "YYYY-MM-DD", time? "HH:MM", timeUnknown?,
+                   place? | (lat + lon + tz), category?, tags?, notes? }
+
+    A place NAME is geocoded here (top hit → lat/lon/tz), so you can hand over
+    scraped rows with just "City, Country" and no coordinates. Explicit lat+lon+tz
+    win over a place name. No time → noon cast, flagged (same honesty rule).
+    - category / tags at the top level are DEFAULTS applied to everyone; a person's
+      own category/tags override / merge.
+    - onExisting: "skip" (default) or "update" — matched by slug (from the name).
+    - dryRun: true returns exactly what WOULD happen (created/updated/skipped/errors)
+      WITHOUT writing. Always dry-run first and show the user, then commit.
+    Returns { dryRun, created[], updated[], skipped[], errors[] } — each error names
+    the person and why (bad date, unresolvable place, …).
+
+    A human can also import by hand: sidebar Import button → paste the table from
+    /import-template.md → Preview → Import. Same endpoint underneath. Writes are
+    recoverable (every save keeps history; delete goes to data/trash).
+
+    Example:
+      curl -s -X POST http://127.0.0.1:4700/api/profiles/import \
+        -H 'Content-Type: application/json' -d '{
+          "category": "research", "tags": ["scraped"], "dryRun": true,
+          "people": [
+            {"name": "Ada Lovelace", "date": "1815-12-10", "time": "18:00", "place": "London, United Kingdom"},
+            {"name": "No Time Client", "date": "1988-03-14", "timeUnknown": true, "place": "Berlin, Germany"}
+          ]}'
+
+## Bulk export — many people at once
+
+Same cohort filter on all three: category, tag, slugs (comma-separated), and
+`where` (placement terms). Omit everything for the whole desk.
+
+GET /api/archive.md?tag=friend&sections=vedic,matrix&vargas=D1,D9,D60
+    ONE master .md — the chosen sections for every matching person, each person's
+    headings demoted under their name, with a contents list.
+    sections: vedic · dashas · human-design · matrix · atlas
+    (atlas = the whole pack; it subsumes the others). Default: vedic.
+
+GET /api/research.md?where=moon.nakshatra=Magha&columns=moon.pada,lagna.sign,ak
+GET /api/research.csv?category=circle&columns=moon.nakshatra,moon.lord
+    ONE ROW per person, plus a count of each distinct value per column. This is the
+    shape for pattern work — a nakshatra cohort of full atlases hides what you want.
+    columns default: lagna.sign, lagna.nakshatra, moon.sign, moon.nakshatra,
+    moon.pada, moon.lord, sun.sign, sun.nakshatra, ak, karakamsa.
+    Add &tally=0 to drop the distribution.
+
+FIELD PATHS (used by both `where` and `columns`)
+    <body>.sign|nakshatra|pada|lord|house|degree|retro|dignity|combust|vargottama
+    lagna.sign, lagna.nakshatra, lagna.pada       (lagna and asc are the same)
+    d9.venus.sign — any implemented varga, SIGN ONLY (vargas carry no degree)
+    ak amk bk mk pik gk dk pk  — the chara karaka's BODY
+    karakamsa                  — the karakamsa sign
+    bodies: sun moon mercury venus mars jupiter saturn rahu ketu uranus neptune pluto
+
+    `where` is comma-separated field=value, ANDed, case-insensitive; `|` lists
+    alternatives. Empty cohort → 404. Bad term → 400.
+      where=moon.lord=Ketu,moon.sign=Leo|Aries|Sagittarius
+      where=d9.venus.sign=Pisces,venus.dignity=debilitated
+
+    Rows whose birth time is unknown are marked ⚠ and their hour-sensitive columns
+    (ascendant, houses, varga lagnas, pada) are WITHHELD (shown ·) and left out of
+    the distribution — only the planets' sign/nakshatra are kept. Divisional columns
+    are sign-only: dN.body.nakshatra / .degree return nothing.
+
+## Ad-hoc casting (no profile saved)
+
+GET /api/cast?date=1990-06-15&time=14:30&lat=40.7128&lon=-74.006&tz=America/New_York&place=New+York
+GET /api/cast/atlas.md?…                   same views as profiles: /api/cast/<view>
+GET /api/cast/chart.svg?…&style=south&varga=9
+GET /api/cities?q=lond                     city search (GeoNames, on-device)
+
+Time unknown? Omit `time` (or timeUnknown=1): noon cast, flagged — the Human Design
+chart is withheld (hour-sensitive), and house/varga layers carry the caveat. The
+system degrades honestly rather than guessing.
+
+## Notes
+
+Computed positions are the input to a reading, not a reading. Where a birth time is
+unknown the cast is a noon cast and the hour-sensitive layers are withheld rather
+than guessed. Charts are verified against astronomy-engine and published fixtures
+(see test/run.mjs).
+
+Engine: astronomy-engine (MIT). Human Design and Matrix of Destiny are third-party
+systems; this implements the calculations and is not affiliated with or endorsed by
+their originators.

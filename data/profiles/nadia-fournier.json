@@ -1,0 +1,20 @@
+{
+  "slug": "nadia-fournier",
+  "name": "Nadia Fournier",
+  "category": "research",
+  "tags": ["sample"],
+  "order": 200,
+  "birth": {
+    "date": "1975-11-02",
+    "time": "06:15",
+    "lat": 51.5074,
+    "lon": -0.1278,
+    "tz": "Europe/London",
+    "place": "London, UK",
+    "timeUnknown": false
+  },
+  "avatar": { "color": "#b700ff", "glyph": null, "shape": "circle", "ink": "#ffffff" },
+  "notes": "Fictional sample profile — safe to delete.",
+  "created": "2026-01-01T00:00:00.000Z",
+  "updated": "2026-01-01T00:00:00.000Z"
+}

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chart Desk</title>
+<link rel="stylesheet" href="/app.css">
+
+<!-- Home-screen install (iOS + Android). "capable" is what makes the phone open
+     it full-screen with no Safari chrome; without it the tap just opens a tab. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Chart Desk">
+<!-- "default" keeps the web view below the status bar, so no notch cutout math. -->
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="167x167" href="/icons/apple-touch-icon-167.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-icon-152.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-touch-icon-120.png">
+<link rel="icon" type="image/png" sizes="64x64" href="/icons/favicon-64.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<meta name="theme-color" content="#fafaf8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17161b" media="(prefers-color-scheme: dark)">
+
+<script>
+  // theme before paint — light is the default
+  document.documentElement.dataset.theme = localStorage.getItem('cd-theme') || 'light';
+</script>
+</head>
+<body>
+<div class="layout">
+  <!-- Drawn as inline SVG, not characters. ⚙ U+2699 and friends are Emoji=Yes
+       codepoints: the system stack hands back a COLOR EMOJI, which ignores the
+       button's color and looks nothing like the rest of the chrome. Paths use
+       currentColor, so they follow light/dark for free. -->
+  <button class="menubtn" id="menubtn" aria-label="Profiles">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <aside class="side" id="side">
+    <div class="side-head">
+      <h1>Chart Desk</h1>
+      <span style="display:inline-flex;gap:6px">
+        <button class="iconbtn" id="importbtn" title="Import people from a list" aria-label="Import people">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 15V3M12 3l-4 4M12 3l4 4M5 21h14"/>
+          </svg>
+        </button>
+        <button class="iconbtn" id="themebtn" title="Light / dark" aria-label="Light / dark">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="8"/>
+            <path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor" stroke="none"/>
+          </svg>
+        </button>
+        <button class="iconbtn" id="settingsbtn" title="Settings" aria-label="Settings">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="3.1"/>
+            <path d="M19.1 14.4a1.6 1.6 0 0 0 .32 1.76l.06.06a1.9 1.9 0 1 1-2.7 2.7l-.05-.06a1.6 1.6 0 0 0-1.77-.32 1.6 1.6 0 0 0-.97 1.46v.17a1.9 1.9 0 1 1-3.8 0v-.09a1.6 1.6 0 0 0-1.05-1.46 1.6 1.6 0 0 0-1.76.32l-.06.06a1.9 1.9 0 1 1-2.7-2.7l.06-.06a1.6 1.6 0 0 0 .32-1.76 1.6 1.6 0 0 0-1.46-.97H3.3a1.9 1.9 0 1 1 0-3.8h.09a1.6 1.6 0 0 0 1.46-1.05 1.6 1.6 0 0 0-.32-1.76l-.06-.06a1.9 1.9 0 1 1 2.7-2.7l.06.06a1.6 1.6 0 0 0 1.76.32h.08a1.6 1.6 0 0 0 .97-1.46V3.3a1.9 1.9 0 1 1 3.8 0v.09a1.6 1.6 0 0 0 .97 1.46 1.6 1.6 0 0 0 1.77-.32l.05-.06a1.9 1.9 0 1 1 2.7 2.7l-.6.06a1.6 1.6 0 0 0-.32 1.76v.08a1.6 1.6 0 0 0 1.46.97h.17a1.9 1.9 0 1 1 0 3.8h-.09a1.6 1.6 0 0 0-1.46.97z"/>
+          </svg>
+        </button>
+      </span>
+    </div>
+    <div class="side-search"><input id="filter" type="text" placeholder="Filter people…" autocomplete="off"></div>
+    <button class="navlink" id="dashlink">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/>
+        <rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/>
+        <rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/>
+        <rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>
+      </svg>Dashboard</button>
+    <nav class="side-list" id="plist" aria-label="Profiles"></nav>
+    <div class="side-foot">
+      <button class="btn primary" id="newbtn" style="flex:1">+ New person</button>
+      <button class="btn" id="castbtn" title="Cast without saving">Cast</button>
+    </div>
+  </aside>
+  <!-- sits after .side so `.side.open ~ .side-scrim` can reveal it -->
+  <div class="side-scrim" id="side-scrim"></div>
+  <main class="main"><div class="main-inner" id="main"></div></main>
+</div>
+<div id="modal-root"></div>
+<div class="toast" id="toast"></div>
+<script src="/vendor/jspdf.umd.min.js" defer></script>
+<script type="module" src="/app.js"></script>
+</body>
+</html>

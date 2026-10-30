@@ -1,0 +1,29 @@
+{
+  "name": "chart-desk",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Local, on-device astrology chart engine — Vedic (D1–D60, panchanga, vimshottari, jaimini), Human Design, and Matrix of Destiny. Utility app + LLM-friendly API.",
+  "author": "Claudia Vaduvescu",
+  "license": "MIT",
+  "keywords": [
+    "astrology",
+    "vedic",
+    "jyotish",
+    "human-design",
+    "matrix-of-destiny",
+    "ephemeris",
+    "panchanga",
+    "vimshottari"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node test/run.mjs"
+  },
+  "dependencies": {
+    "astronomy-engine": "2.1.19",
+    "jspdf": "4.2.1"
+  }
+}

@@ -1,0 +1,20 @@
+# dependencies (restored by `npm install`)
+node_modules/
+
+# runtime data — profiles are personal; keep only the fictional samples
+data/profiles/*.json
+!data/profiles/river-okafor.json
+!data/profiles/nadia-fournier.json
+data/history/*
+!data/history/.gitkeep
+data/trash/*
+!data/trash/.gitkeep
+
+# logs, OS cruft, editor
+*.log
+.DS_Store
+.vscode/
+.idea/
+
+# Mac app build output
+mac/build/

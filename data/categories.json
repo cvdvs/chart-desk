@@ -1,0 +1,22 @@
+[
+  {
+    "key": "circle",
+    "label": "Personal Circle",
+    "order": 1
+  },
+  {
+    "key": "clients",
+    "label": "Clients",
+    "order": 2
+  },
+  {
+    "key": "research",
+    "label": "Research",
+    "order": 3
+  },
+  {
+    "key": "other",
+    "label": "Other",
+    "order": 4
+  }
+]

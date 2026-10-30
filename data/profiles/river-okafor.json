@@ -1,0 +1,20 @@
+{
+  "slug": "river-okafor",
+  "name": "River Okafor",
+  "category": "circle",
+  "tags": ["sample"],
+  "order": 100,
+  "birth": {
+    "date": "1990-06-15",
+    "time": "14:30",
+    "lat": 40.7128,
+    "lon": -74.006,
+    "tz": "America/New_York",
+    "place": "New York, USA",
+    "timeUnknown": false
+  },
+  "avatar": { "color": "#6944ff", "glyph": null, "shape": "circle", "ink": "#ffffff" },
+  "notes": "Fictional sample profile — safe to delete.",
+  "created": "2026-01-01T00:00:00.000Z",
+  "updated": "2026-01-01T00:00:00.000Z"
+}

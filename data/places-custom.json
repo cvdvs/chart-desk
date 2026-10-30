@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Berlin",
+    "country": "US",
+    "admin1": "VT",
+    "lat": 44.2081,
+    "lon": -72.5834,
+    "tz": "America/New_York",
+    "population": 2807,
+    "note": "Washington County, Vermont — under the GeoNames cities15000 cut, added by hand 2026-08-11"
+  }
+]

@@ -1,0 +1,615 @@
+/* Chart Desk — utility styles. Light first; dark via [data-theme=dark]. */
+:root {
+  --bg: #fafaf8;
+  --panel: #ffffff;
+  --ink: #1c1b22;
+  --ink-2: #55535e;
+  --ink-3: #8b8894;
+  --line: #e4e2df;
+  --line-2: #d2d0cc;
+  --accent: #4f46b8;
+  --accent-soft: #eeedfa;
+  --good: #2e7d4f;
+  --warn: #b3541e;
+  --chip: #f1f0ee;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+[data-theme="dark"] {
+  --bg: #17161b;
+  --panel: #201f26;
+  --ink: #e8e6ef;
+  --ink-2: #b0adbc;
+  --ink-3: #7d7a89;
+  --line: #312f3a;
+  --line-2: #3e3c48;
+  --accent: #8d85e8;
+  --accent-soft: #2a2836;
+  --chip: #2a2932;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.45;
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; color: var(--ink); }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.layout { display: flex; height: 100vh; height: 100dvh; }  /* dvh: 100vh ignores the iOS keyboard */
+
+/* ————— sidebar ————— */
+.side {
+  width: 264px; flex: none; display: flex; flex-direction: column;
+  border-right: 1px solid var(--line); background: var(--panel);
+}
+.side-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 10px;
+}
+.side-head h1 { font-size: 15px; margin: 0; letter-spacing: .01em; }
+.side-head h1 span { color: var(--ink-3); font-weight: 400; }
+.iconbtn {
+  background: none; border: 1px solid var(--line); border-radius: 7px;
+  width: 28px; height: 28px; line-height: 1; color: var(--ink-2);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.iconbtn:hover { border-color: var(--line-2); color: var(--ink); }
+/* Inline icons for the chrome — drawn, not typed, so no codepoint can be
+   substituted for a color emoji and throw away the button's color. */
+.ic {
+  width: 16px; height: 16px; flex: none; display: block;
+  fill: none; stroke: currentColor; stroke-width: 1.7;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.menubtn .ic { width: 18px; height: 18px; }
+.side-search { padding: 0 12px 10px; }
+.side-search input {
+  width: 100%; padding: 7px 10px; border: 1px solid var(--line);
+  border-radius: 8px; background: var(--bg); outline: none;
+}
+.side-search input:focus { border-color: var(--accent); }
+.side-list { flex: 1; overflow-y: auto; padding: 2px 8px 12px; }
+.cat-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-3); margin: 14px 8px 5px;
+}
+.person {
+  display: flex; align-items: center; gap: 9px; width: 100%;
+  padding: 6px 8px; border: none; background: none; border-radius: 8px;
+  text-align: left;
+}
+.person:hover { background: var(--chip); }
+.person.on { background: var(--accent-soft); }
+.person .nm { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.person .sub { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); }
+.side-foot {
+  padding: 10px 12px; border-top: 1px solid var(--line);
+  display: flex; gap: 8px;
+}
+.btn {
+  border: 1px solid var(--line-2); background: var(--panel);
+  border-radius: 8px; padding: 7px 12px; font-size: 13.5px;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { filter: brightness(1.08); color: #fff; }
+.btn.sm { padding: 4px 9px; font-size: 12.5px; border-radius: 7px; }
+.btn.danger:hover { border-color: #c0392b; color: #c0392b; }
+
+/* ————— main ————— */
+/* opaque theme fill on the full-height scroll container: the only element in the
+   column that paints was body, one layer back, so a reflow gap on this scroller
+   showed the WKWebView's black backing. This is the "so it never happens again". */
+.main { flex: 1; overflow-y: auto; background: var(--bg); }
+.main-inner { max-width: 1060px; margin: 0 auto; padding: 20px 26px 80px; }
+
+.profile-head { display: flex; align-items: center; gap: 14px; margin: 6px 0 4px; flex-wrap: wrap; }
+.profile-head h2 { margin: 0; font-size: 22px; }
+.birthline { font-family: var(--mono); font-size: 12px; color: var(--ink-2); margin: 2px 0 0; }
+.chip {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em;
+  text-transform: uppercase; background: var(--chip); border-radius: 999px;
+  padding: 3px 10px; color: var(--ink-2);
+}
+.warnnote { color: var(--warn); font-size: 12.5px; font-family: var(--mono); }
+
+.tabs {
+  display: flex; gap: 2px; margin: 18px 0 0; border-bottom: 1px solid var(--line);
+  overflow-x: auto; scrollbar-width: none;
+}
+.tabs button {
+  border: none; background: none; padding: 8px 13px; color: var(--ink-2);
+  border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap;
+  font-size: 13.5px;
+}
+.tabs button:hover { color: var(--ink); }
+.tabs button.on { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+
+.pane { padding: 18px 0 0; }
+.grid2 { display: grid; grid-template-columns: minmax(300px, 460px) 1fr; gap: 22px; align-items: start; }
+.grid2 > * { min-width: 0; }
+.grid-even { grid-template-columns: 1fr 1fr; }
+@media (max-width: 860px) { .grid2, .grid-even { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  padding: 14px 16px; margin: 0 0 16px;
+}
+.card h3 {
+  margin: 0 0 10px; font-family: var(--mono); font-size: 11px;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3);
+  font-weight: 600;
+}
+.card svg { width: 100%; height: auto; display: block; color: var(--ink); }
+
+table.data { border-collapse: collapse; width: 100%; font-size: 13px; }
+table.data th {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--ink-3); font-weight: 600;
+  text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line);
+}
+table.data td { padding: 4.5px 8px; border-bottom: 1px solid var(--line); }
+table.data tr:last-child td { border-bottom: none; }
+table.data td.num, table.data td.mono { font-family: var(--mono); font-size: 12px; }
+table.data tr.hl td { background: var(--accent-soft); }
+.scroll-x { overflow-x: auto; }
+/* the Matrix age ring: on a narrow card the years stack under the ages, so the
+   card's name stays whole instead of sliding off the edge. Below 1100px the
+   octagram would squeeze this column to nothing, so the tab goes single-file. */
+@media (max-width: 1100px) { .ring-grid { grid-template-columns: 1fr; } }
+.ring-card { container-type: inline-size; }
+@container (max-width: 400px) {
+  .ring-table, .ring-table tr, .ring-table td { display: block; }
+  .ring-table tr:first-child { display: none; }
+  table.ring-table td { border-bottom: none; padding: 1px 8px; }
+  .ring-table tr { border-bottom: 1px solid var(--line); }
+  .ring-table tr.ring-row { display: grid; grid-template-columns: 156px 32px minmax(0, 1fr); align-items: center; padding: 4px 0; }
+  .ring-table tr.hl { background: var(--accent-soft); }
+  .ring-row td:nth-child(1) { grid-area: 1 / 1; }
+  .ring-row td:nth-child(2) { grid-area: 2 / 1; }
+  .ring-row td:nth-child(3) { grid-area: 1 / 2 / 3 / 3; }
+  .ring-row td:nth-child(4) { grid-area: 1 / 3 / 3 / 4; }
+}
+
+.seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; }
+.seg button { border: none; background: none; padding: 5px 12px; font-size: 12.5px; color: var(--ink-2); }
+.seg button.on { background: var(--accent); color: #fff; }
+
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 3px 14px; font-size: 13.5px; }
+.kv dt { color: var(--ink-3); font-family: var(--mono); font-size: 11.5px; padding-top: 2px; }
+.kv dd { margin: 0; }
+
+.md-note { font-size: 13px; color: var(--ink-2); }
+.sig { display: flex; gap: 8px; align-items: baseline; margin: 3px 0; font-size: 13.5px; }
+.sig .dot { font-size: 11px; }
+.sig.on .dot { color: var(--accent); }
+.sig.off { color: var(--ink-3); }
+
+.prose { font-size: 14.5px; max-width: 72ch; }
+.prose p { margin: 0 0 10px; }
+.prose .lbl { font-weight: 650; }
+
+.export-list { display: grid; gap: 8px; }
+.export-row {
+  display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+  border: 1px solid var(--line); border-radius: 9px; background: var(--panel);
+}
+.export-label { flex: none; font-size: 13.5px; min-width: 200px; }
+.export-row .path { font-family: var(--mono); font-size: 12px; flex: 1; overflow-x: auto; white-space: nowrap; }
+code, .mono { font-family: var(--mono); }
+pre.codeblock {
+  background: var(--chip); border-radius: 9px; padding: 10px 12px;
+  font-family: var(--mono); font-size: 12px; overflow-x: auto;
+}
+
+/* ————— empty state / cast ————— */
+.hero { max-width: 560px; margin: 8vh auto 0; text-align: center; }
+.hero h2 { font-size: 20px; margin: 0 0 6px; }
+.hero p { color: var(--ink-2); margin: 0 0 22px; }
+
+/* ————— modal ————— */
+.overlay {
+  position: fixed; inset: 0; background: rgba(20, 18, 28, .4);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 6vh 16px; z-index: 50; overflow-y: auto;
+}
+.modal {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+  width: 100%; max-width: 480px; padding: 20px 22px;
+}
+.modal h3 { margin: 0 0 14px; font-size: 17px; }
+.field { margin: 0 0 13px; }
+.field label {
+  display: block; font-family: var(--mono); font-size: 10.5px;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3);
+  margin: 0 0 5px;
+}
+.field input[type=text], .field input[type=date], .field input[type=time],
+.field select, .field textarea {
+  width: 100%; padding: 7px 10px; border: 1px solid var(--line-2);
+  border-radius: 8px; background: var(--bg); outline: none;
+}
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
+.field .hint { font-size: 11.5px; color: var(--ink-3); margin-top: 4px; }
+/* day / month / year — see dateField() for why this replaced <input type=date> */
+/* Day and year get only what two/four digits need; the month name takes the
+   rest, since this field shares a half-width row with Section on desktop. */
+/* ————— bulk export card ————— */
+.bulk-row { display: flex; align-items: center; gap: 10px; margin: 0 0 4px; flex-wrap: wrap; }
+.bulk-lbl {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-3); width: 150px; flex: none;
+}
+.bulk-row input[type=text] {
+  flex: 1; min-width: 200px; padding: 6px 10px; border: 1px solid var(--line-2);
+  border-radius: 8px; background: var(--bg); outline: none; font-size: 13px;
+}
+.bulk-row input[type=text]:focus { border-color: var(--accent); }
+.bulk-acts { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.bulk-acts .scope-count { margin-right: auto; }
+
+/* compact export card for the dashboard column — labels above fields, one page shown */
+.bulk-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.bulk-compact input[type=text] {
+  width: 100%; padding: 7px 10px; border: 1px solid var(--line-2);
+  border-radius: 8px; background: var(--bg); outline: none; font-size: 13px;
+}
+.bulk-compact input[type=text]:focus { border-color: var(--accent); }
+.bulk-compact .seg { width: 100%; }
+.bulk-compact .seg button { flex: 1; }
+.bulk-compact .bulk-acts .btn { flex: 1 1 auto; justify-content: center; }
+
+/* import modal — the preview summary lines */
+.import-result { margin: 10px 0 2px; display: grid; gap: 5px; }
+.imp-line { margin: 0; font-size: 12.5px; line-height: 1.5; }
+.imp-line .lbl { font-weight: 650; }
+.imp-add { color: var(--good); }
+.imp-upd { color: var(--accent); }
+.imp-skip { color: var(--ink-3); }
+.imp-err { color: var(--warn); }
+.modal textarea { border: 1px solid var(--line-2); border-radius: 8px; padding: 8px 10px; background: var(--bg); color: var(--ink); outline: none; }
+.modal textarea:focus { border-color: var(--accent); }
+@media (max-width: 760px) {
+  .bulk-lbl { width: 100%; }
+  .bulk-acts .btn { flex: 1 1 auto; justify-content: center; }
+}
+
+/* the At-a-glance card always describes the RASI, whatever varga is selected */
+.glance-varga {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); font-weight: 400;
+}
+.dfield { display: grid; grid-template-columns: 44px minmax(0, 1fr) 58px; gap: 5px; }
+.dfield .dnum { text-align: center; font-family: var(--mono); letter-spacing: .04em; padding: 7px 4px; }
+.dfield select { padding-left: 8px; padding-right: 4px; }
+.field .dfield input.bad { border-color: var(--warn); }
+.dfield-bad { color: var(--warn); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); }
+
+.city-box { position: relative; }
+.city-list {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 10;
+  background: var(--panel); border: 1px solid var(--line-2); border-radius: 9px;
+  max-height: 200px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,.12);
+}
+.city-list button {
+  display: flex; justify-content: space-between; gap: 8px; width: 100%;
+  padding: 7px 11px; border: none; background: none; text-align: left; font-size: 13.5px;
+}
+.city-list button:hover { background: var(--chip); }
+.city-list .cc { color: var(--ink-3); font-family: var(--mono); font-size: 11px; }
+.city-ok { font-family: var(--mono); font-size: 11px; color: var(--good); margin-top: 4px; }
+
+.swatches { display: flex; gap: 7px; flex-wrap: wrap; }
+.swatch {
+  width: 26px; height: 26px; border-radius: 50%; border: 2px solid transparent;
+  padding: 0; flex: none;
+}
+.swatch.on { border-color: var(--ink); }
+.glyphs { display: flex; gap: 5px; flex-wrap: wrap; }
+.glyphbtn {
+  width: 30px; height: 30px; border: 1px solid var(--line-2); border-radius: 7px;
+  background: var(--bg); font-size: 15px; display: inline-flex;
+  align-items: center; justify-content: center;
+  font-family: 'Apple Symbols', 'Segoe UI Symbol', 'DejaVu Sans', serif;
+  font-variant-emoji: text;
+}
+.glyphbtn.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.modal-foot { display: flex; justify-content: space-between; gap: 10px; margin-top: 18px; }
+.modal-foot .right { display: flex; gap: 10px; margin-left: auto; }
+
+.avatar-preview { display: flex; align-items: center; gap: 12px; }
+
+/* ————— phone ————— */
+.menubtn, .side-scrim { display: none; }
+@media (max-width: 760px) {
+  /* ————— the single most important mobile rule —————
+     Safari zooms the whole page in whenever you focus a form control whose text
+     is under 16px. Ours inherit the body's 15px, so tapping any field zoomed
+     the layout and left it pannable, with the labels cut off past the left
+     edge. 16px is the threshold; nothing else stops it. Do NOT "fix" this with
+     user-scalable=no — that takes pinch-zoom away from the whole app. */
+  input, select, textarea, .field input, .field select, .field textarea {
+    font-size: 16px;
+  }
+  /* the page itself never scrolls sideways; panes scroll on their own */
+  html, body { overflow-x: hidden; }
+
+  .side {
+    position: fixed; inset: 0 25% 0 0; z-index: 40; min-width: 250px;
+    transform: translateX(-102%); transition: transform .22s ease;
+    box-shadow: 8px 0 30px rgba(0,0,0,.15);
+  }
+  .side.open { transform: none; }
+  /* Tapping anywhere off the drawer closes it. A scrim rather than a document
+     listener, so the dismissing tap cannot also fire whatever it landed on. */
+  .side-scrim {
+    display: block; position: fixed; inset: 0; z-index: 39;
+    background: rgba(0, 0, 0, .3);
+    opacity: 0; pointer-events: none; transition: opacity .22s ease;
+  }
+  .side.open ~ .side-scrim { opacity: 1; pointer-events: auto; }
+  .menubtn {
+    display: inline-flex; position: fixed; top: 12px; left: 12px; z-index: 30;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 9px;
+    width: 38px; height: 38px; align-items: center; justify-content: center;
+  }
+  .main-inner { padding: 60px 14px 80px; }
+  .profile-head h2 { font-size: 19px; }
+
+  /* Export rows stack instead of running off the right edge. Side by side, the
+     API path alone is wider than the screen and pushes every button out of
+     reach — on a phone the tab was unusable. */
+  .export-row { flex-wrap: wrap; gap: 8px 8px; }
+  .export-label { flex: 1 0 100%; min-width: 0; font-weight: 550; }
+  .export-row .path { flex: 1 0 100%; color: var(--ink-3); font-size: 11px; }
+  .export-row .btn { flex: 1 1 auto; justify-content: center; }
+  .export-sub { padding-left: 0; padding-right: 0; }
+
+  /* ————— pop-outs become full-height sheets —————
+     Centred cards do not work on a phone: the edit form is taller than the
+     screen, so Save and Cancel end up below the fold with nothing to say they
+     are there. Full height + a footer stuck to the bottom of the scroller
+     keeps them reachable no matter how long the form gets. */
+  /* Keep align-items: flex-start. Stretching sizes the sheet to the viewport,
+     and a form taller than that then overflows its own painted background —
+     the page shows through behind the lower half of the form. */
+  .overlay { padding: 0; }
+  .modal {
+    max-width: none; min-height: 100%;
+    border: none; border-radius: 0;
+    padding: 20px 16px 0;
+  }
+  .modal-foot {
+    position: sticky; bottom: 0; z-index: 1;
+    margin: 18px -16px 0; padding: 12px 16px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    background: var(--panel); border-top: 1px solid var(--line);
+  }
+  /* paired fields stack — side by side they are ~160px each and unreadable */
+  .row2 { grid-template-columns: 1fr; }
+  .avatar-preview { align-items: flex-start; }
+  /* .av-group / .av-label are restyled for phones further down, next to their
+     own base rules — those are declared after this block and would win here. */
+  /* Installed to the home screen there is no browser chrome, so the home
+     indicator and the rounded corners sit directly on the layout. */
+  .main-inner { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+  .side-foot  { padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
+}
+/* ————— sidebar v2: collapse, drag, tags, add-section ————— */
+.cat-toggle {
+  display: flex; align-items: center; gap: 6px; width: 100%;
+  background: none; border: none; text-align: left; border-radius: 6px;
+  padding: 4px 8px; margin: 12px 0 4px;
+}
+.cat-toggle:hover { background: var(--chip); }
+.cat-toggle .chev { font-size: 9px; width: 10px; color: var(--ink-3); }
+.cat-toggle .cat-n { margin-left: auto; font-family: var(--mono); font-size: 10px; color: var(--ink-3); }
+
+/* category header row: toggle takes the width, a light export button sits at the end */
+.cat-head { display: flex; align-items: center; }
+.cat-head .cat-toggle { flex: 1; margin-right: 0; }
+.cat-export {
+  flex: none; background: none; border: none; padding: 4px; margin-right: 6px;
+  border-radius: 6px; color: var(--ink-3); opacity: 0; transition: opacity .12s;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.cat-export .ic { width: 15px; height: 15px; }
+.cat-head:hover .cat-export, .cat-export:focus-visible { opacity: 1; }
+.cat-export:hover { background: var(--chip); color: var(--accent); }
+/* touch screens have no hover — keep it visible there */
+@media (hover: none) { .cat-export { opacity: .7; } }
+.cat-label { margin: 0; }
+.cat-empty {
+  font-family: var(--mono); font-size: 10px; color: var(--ink-3);
+  border: 1px dashed var(--line-2); border-radius: 7px; padding: 6px 10px; margin: 2px 8px;
+}
+.person.dragging { opacity: 0.4; }
+.dropover { outline: 2px solid var(--accent); outline-offset: -1px; border-radius: 8px; }
+.tagrow { display: flex; gap: 4px; flex: none; }
+.tagchip {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .04em;
+  background: var(--chip); color: var(--ink-2); border-radius: 999px; padding: 2px 7px;
+  max-width: 74px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.chip.tag { text-transform: none; letter-spacing: .02em; }
+.add-section { padding: 12px 8px 4px; display: flex; gap: 6px; align-items: center; }
+.add-section input {
+  flex: 1; min-width: 0; padding: 5px 9px; border: 1px solid var(--line-2);
+  border-radius: 7px; background: var(--bg); outline: none; font-size: 13px;
+}
+.btn.ghost { border-style: dashed; color: var(--ink-3); }
+.btn.ghost:hover { color: var(--accent); }
+
+/* ————— vedic v2: pills, toolbar, legends, aspects ————— */
+.vedic-top { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.pills { display: flex; gap: 4px; flex-wrap: wrap; }
+.pill {
+  border: 1px solid var(--line-2); background: var(--panel); border-radius: 999px;
+  padding: 4px 11px; font-family: var(--mono); font-size: 11.5px; color: var(--ink-2);
+}
+.pill:hover { border-color: var(--accent); color: var(--accent); }
+.pill.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.varga-note {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-3); margin: 10px 0 14px;
+}
+.card-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+.legend { font-family: var(--mono); font-size: 10px; letter-spacing: .05em; line-height: 1.6; color: var(--ink-3); margin: 10px 0 0; }
+.asp-type { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+td.tight { color: var(--warn); font-weight: 600; }
+td.dim, .dim { color: var(--ink-3); font-size: 11px; }
+.kv dd.small { font-size: 12px; line-height: 1.5; }
+.dasha-strip { display: flex; gap: 2px; width: 100%; }
+.ds-cell {
+  font-family: var(--mono); font-size: 8.5px; text-align: center; color: var(--ink-3);
+  background: var(--chip); border-radius: 4px; padding: 4px 0; overflow: hidden; white-space: nowrap;
+}
+.ds-cell.on { background: var(--accent); color: #fff; }
+
+/* ————— dashboard ————— */
+.dash-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; flex-wrap: wrap; margin: 6px 0 18px; }
+.tiles { display: flex; gap: 12px; flex-wrap: wrap; margin: 0 0 18px; }
+.tile {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  padding: 12px 18px; min-width: 92px;
+}
+.tile-n { font-size: 24px; font-weight: 650; line-height: 1.1; }
+.tile-l { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-top: 3px; }
+.bar-row { display: flex; align-items: center; gap: 10px; margin: 5px 0; font-size: 13px; }
+/* shrinkable, not fixed — in a narrow card a fixed label starves the track to 0 */
+.bar-label { flex: 0 1 118px; min-width: 62px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar-track { flex: 1; height: 8px; background: var(--chip); border-radius: 99px; overflow: hidden; }
+.bar-fill { display: block; height: 100%; background: var(--accent); opacity: .75; border-radius: 99px; }
+.bar-n { font-family: var(--mono); font-size: 11px; color: var(--ink-3); width: 18px; text-align: right; }
+.recent-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.recent-chip {
+  display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line);
+  background: var(--panel); border-radius: 999px; padding: 4px 12px 4px 5px; font-size: 13px;
+}
+.recent-chip:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ————— the sky now (dashboard) ————— */
+/* sized by its own width, not the window's: the card is narrow both in a
+   tight two-column desktop and on a phone, at different window sizes */
+.sky-card { container-type: inline-size; }
+.sky-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 10px; margin: 0 0 4px; }
+.sky-head h3 { margin: 0; white-space: nowrap; }
+.sky-meta { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); white-space: nowrap; }
+.sky-row {
+  display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; column-gap: 9px; row-gap: 4px;
+  align-items: baseline; padding: 8px 0; border-top: 1px solid var(--line);
+  font-size: 13px; cursor: pointer;
+}
+.sky-head + .sky-row { border-top: none; }
+.sky-row:hover .sky-name { color: var(--accent); }
+.sky-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+/* the zodiac and planet codepoints as TEXT, never color emoji (as .bar-signs) */
+.sky-sym { font-family: 'Apple Symbols', 'Segoe UI Symbol', 'DejaVu Sans', serif; font-variant-emoji: text; }
+.sky-mark { font-size: 15px; line-height: 1; text-align: center; }
+.sky-name { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sky-retro { color: var(--warn); font-weight: 600; margin-left: 5px; }
+.sky-note { color: var(--ink-3); font-size: 11.5px; margin-left: 5px; }
+.sky-pos { white-space: nowrap; }
+.sky-deg { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.sky-sub {
+  grid-column: 2 / -1; display: flex; align-items: center; gap: 10px; min-width: 0;
+  font-size: 11.5px; color: var(--ink-3);
+}
+.sky-left { flex: 0 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink-2); }
+.sky-sub .bar-track { height: 5px; min-width: 28px; }
+.sky-until { flex: none; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.sky-detail { grid-column: 2 / -1; display: grid; gap: 3px; padding: 4px 0 2px; font-size: 12px; line-height: 1.45; color: var(--ink-2); }
+.sky-detail .dim { color: var(--ink-3); }
+/* a narrow card keeps the glance (where, ℞, how long, which sign next); the
+   exact dates move to the tap-open detail instead of being cut off mid-word */
+@container (max-width: 300px) {
+  .sky-note, .sky-date { display: none; }
+}
+@media (max-width: 860px) {
+  /* one column: the live sky leads the page, everything else keeps its order */
+  .dash-cols { row-gap: 0; }
+  .dash-cols > div { display: contents; }
+  .dash-cols .card { min-width: 0; }
+  .dash-cols .sky-card { order: -1; }
+}
+
+/* ————— nav, lightbox, export picker, avatar groups ————— */
+.navlink {
+  display: flex; align-items: center; gap: 8px; width: calc(100% - 24px);
+  margin: 0 12px 4px; padding: 7px 10px; border: none; background: none;
+  border-radius: 8px; text-align: left; font-size: 13.5px; color: var(--ink-2);
+}
+.navlink:hover { background: var(--chip); color: var(--ink); }
+.zoomable { cursor: zoom-in; }
+.lightbox {
+  position: fixed; inset: 0; z-index: 80; background: rgba(12, 11, 18, .78);
+  display: flex; align-items: center; justify-content: center; padding: 2.5vmin;
+  cursor: zoom-out;
+}
+.lightbox-inner {
+  background: var(--panel); border-radius: 14px; padding: 16px;
+  width: min(96vw, 1200px); height: min(94vh, 1200px);
+  display: flex; align-items: center; justify-content: center;
+}
+.lightbox-inner svg { max-width: 100%; max-height: 100%; color: var(--ink); }
+.export-sub {
+  display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;
+  padding: 8px 12px 4px; margin: -4px 0 4px;
+}
+.varga-pick { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+.varga-pick .pill { padding: 2px 8px; font-size: 10px; }
+.av-group { display: flex; align-items: center; gap: 8px; }
+.av-label {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-3); width: 74px; flex: none;
+}
+.swatch.ink { border: 1px solid var(--line-2); width: 22px; height: 22px; }
+.swatch.ink.on { border: 2px solid var(--accent); }
+/* On a phone the 74px label column starves the swatches; put it on its own
+   line instead. Must live here, after the base rules above — the phone block
+   earlier in this file has the same specificity and would lose to them. */
+@media (max-width: 760px) {
+  .av-group { flex-wrap: wrap; gap: 6px 8px; }
+  .av-label { width: 100%; }
+}
+
+/* ————— v8: scope filter, element-tinted bars, deity ranking ————— */
+.scope-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 0 0 16px; }
+.scope-field { display: inline-flex; align-items: center; gap: 7px; }
+.scope-field > span {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.scope-field select {
+  border: 1px solid var(--line-2); border-radius: 8px; background: var(--panel);
+  padding: 5px 9px; font-size: 12.5px; color: var(--ink); outline: none; max-width: 210px;
+}
+.scope-field select:focus { border-color: var(--accent); }
+.scope-count { font-family: var(--mono); font-size: 11px; color: var(--ink-3); margin-left: auto; }
+.bar-label { flex-basis: 132px; }
+/* the zodiac codepoints default to COLOR EMOJI in the system font stack,
+   which throws away the element color — force a text-presentation
+   symbol face (verified on macOS: Apple Symbols carries U+2648–2653) */
+.bar-signs {
+  display: inline-flex; gap: 3px; width: 26px; flex: none; font-size: 13.5px; line-height: 1;
+  justify-content: flex-start;
+  font-family: 'Apple Symbols', 'Segoe UI Symbol', 'DejaVu Sans', serif;
+  font-variant-emoji: text;
+}
+
+.toast {
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: var(--bg); border-radius: 9px;
+  padding: 8px 16px; font-size: 13px; z-index: 60; opacity: 0;
+  transition: opacity .2s;
+}
+.toast.show { opacity: 1; }
