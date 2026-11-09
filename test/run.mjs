@@ -261,6 +261,28 @@ const ROOT_DIR = dirname(dirname(fileURLToPath(import.meta.url)));
     ok(!!cd.current, 'chara: a current period resolves');
   }
 
+  // Sub-periods are counted from the major's own start, day clamped to the
+  // month's end. They used to be chained month to month, so a 29th–31st start
+  // rolled over (31 Jan + 1 month → "31 Feb" → 3 Mar), every later sub drifted
+  // by days and the last ran past the major.
+  for (const date of ['1990-01-31', '1993-10-29', '1992-02-29']) {
+    const cd = castAll({ date, time: '12:00', lat: 44.43, lon: 26.10, tz: 'Europe/Bucharest' }).jaimini.charaDasha;
+    let bad = null;
+    for (const m of cd.majors) {
+      const s0 = new Date(m.start);
+      for (let k = 0; k < 12 && !bad; k++) {
+        const total = s0.getUTCMonth() + k * m.years;
+        const y = s0.getUTCFullYear() + Math.floor(total / 12), mo = total % 12;
+        const want = Date.UTC(y, mo, Math.min(s0.getUTCDate(), new Date(Date.UTC(y, mo + 1, 0)).getUTCDate()));
+        if (+m.subs[k].start !== want) bad = `${m.signName} sub ${k + 1} starts ${dtIso(m.subs[k].start)}, want ${dtIso(want)}`;
+        else if (k < 11 && +m.subs[k].end !== +m.subs[k + 1].start) bad = `${m.signName} sub ${k + 1} does not meet sub ${k + 2}`;
+      }
+      if (!bad && +m.subs[11].end !== +m.end) bad = `${m.signName} last sub ends ${dtIso(m.subs[11].end)}, major ends ${dtIso(m.end)}`;
+      if (bad) break;
+    }
+    ok(!bad, `chara: subs counted from the major's start, day clamped (born ${date}${bad ? ` — ${bad}` : ''})`);
+  }
+
   // Slug validation lives at the write, not at the route — POST used to take
   // body.slug verbatim into join(DIR, slug + '.json').
   for (const bad of ['../../../../tmp/qa-evil', '/etc/qa-evil', 'Has Spaces', '..', 'UPPER']) {
